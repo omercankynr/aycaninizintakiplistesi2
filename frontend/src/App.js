@@ -1120,17 +1120,16 @@ function App() {
           <>
             {/* Şirket Çalışanı Bilgisi */}
             <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
-              <h3 className="font-bold text-lg text-orange-800 mb-2">Şirket Çalışanları Yemek Listesi</h3>
+              <h3 className="font-bold text-lg text-orange-800 mb-2">Yemek Listesi</h3>
               <p className="text-sm text-orange-700">
-                Bu liste sadece "Şirket Çalışanı" rolündeki ve ofiste çalışan personeli gösterir. 
-                Home Office çalışanlar yemek listesine dahil edilmez.
+                Şirket çalışanları için yemek listesi. Home Office çalışanlar dahil edilmez.
               </p>
               <div className="flex flex-wrap gap-4 mt-2 text-sm">
                 <p className="text-orange-600">
-                  <strong>Ofiste Çalışan:</strong> {employees.filter(e => e.role === "Company" && !e.home_office).length} kişi
+                  <strong>Şirket Çalışanı:</strong> {employees.filter(e => e.work_type === "Office").length} kişi
                 </p>
                 <p className="text-blue-600">
-                  <strong>Home Office:</strong> {employees.filter(e => e.role === "Company" && e.home_office).length} kişi
+                  <strong>Home Office:</strong> {employees.filter(e => e.work_type === "HomeOffice").length} kişi
                 </p>
               </div>
             </div>
