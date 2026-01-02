@@ -18,14 +18,15 @@ const getWeeksOfJanuary2025 = () => {
 
 const getDaysOfWeek = (weekStart) => {
   const days = [];
-  const start = new Date(weekStart);
-  const dayNames = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
+  const start = new Date(weekStart + 'T00:00:00');
+  const dayNames = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
   
   for (let i = 0; i < 7; i++) {
     const date = new Date(start);
     date.setDate(start.getDate() + i);
+    const dayOfWeek = date.getDay();
     days.push({
-      name: dayNames[i],
+      name: dayNames[dayOfWeek],
       date: date.toISOString().split('T')[0],
       dayOfMonth: date.getDate(),
       month: date.getMonth() + 1
