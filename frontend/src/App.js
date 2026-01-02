@@ -701,8 +701,9 @@ const LeaveTypeTable = ({ leaveTypes, employees, onDelete }) => {
 const MealList = ({ week, leaves, employees }) => {
   const days = getDaysOfWeek(week.start);
   
-  // Sadece şirket çalışanlarını filtrele
-  const companyEmployees = employees.filter(emp => emp.role === "Company");
+  // Sadece şirket çalışanlarını filtrele (Home Office olmayanlar)
+  const companyEmployees = employees.filter(emp => emp.role === "Company" && !emp.home_office);
+  const homeOfficeEmployees = employees.filter(emp => emp.role === "Company" && emp.home_office);
   const totalCompanyEmployees = companyEmployees.length;
   
   // Her gün için çalışan (izinli olmayan) kişileri hesapla
