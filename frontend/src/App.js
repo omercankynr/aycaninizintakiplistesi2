@@ -6,14 +6,42 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 // Helper functions
-const getWeeksOfJanuary2025 = () => {
-  return [
-    { start: "2024-12-29", end: "2025-01-04", label: "29 Aralık - 4 Ocak" },
-    { start: "2025-01-05", end: "2025-01-11", label: "5 Ocak - 11 Ocak" },
-    { start: "2025-01-12", end: "2025-01-18", label: "12 Ocak - 18 Ocak" },
-    { start: "2025-01-19", end: "2025-01-25", label: "19 Ocak - 25 Ocak" },
-    { start: "2025-01-26", end: "2025-02-01", label: "26 Ocak - 1 Şubat" },
-  ];
+const getWeeksOfYear = (year) => {
+  const weeks = [];
+  let currentDate = new Date(year, 0, 1); // 1 Ocak
+  
+  // Haftanın başlangıcını Pazar olarak ayarla
+  const dayOfWeek = currentDate.getDay();
+  if (dayOfWeek !== 0) {
+    currentDate.setDate(currentDate.getDate() - dayOfWeek);
+  }
+  
+  while (currentDate.getFullYear() <= year) {
+    const weekStart = new Date(currentDate);
+    const weekEnd = new Date(currentDate);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+    
+    // Yılın sonuna kadar devam et
+    if (weekStart.getFullYear() > year) break;
+    
+    const formatDateLabel = (date) => {
+      const day = date.getDate();
+      const months = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", 
+                      "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+      return `${day} ${months[date.getMonth()]}`;
+    };
+    
+    weeks.push({
+      start: weekStart.toISOString().split('T')[0],
+      end: weekEnd.toISOString().split('T')[0],
+      label: `${formatDateLabel(weekStart)} - ${formatDateLabel(weekEnd)}`,
+      month: weekStart.getMonth()
+    });
+    
+    currentDate.setDate(currentDate.getDate() + 7);
+  }
+  
+  return weeks;
 };
 
 const getDaysOfWeek = (weekStart) => {
@@ -38,9 +66,15 @@ const getDaysOfWeek = (weekStart) => {
 const formatDate = (dateStr) => {
   const date = new Date(dateStr);
   const day = date.getDate();
-  const months = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+  const months = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", 
+                  "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
   return `${day} ${months[date.getMonth()]}`;
 };
+
+const MONTHS = [
+  "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
+  "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
+];
 
 // Components
 const EmployeeSelect = ({ employees, value, onChange, placeholder = "Temsilci Seçin" }) => {
@@ -90,8 +124,8 @@ const DayColumn = ({ day, leaves, employees, onAddLeave, onRemoveLeave, isToday 
   const isFlexDay = ["Salı", "Çarşamba", "Perşembe"].includes(day.name);
 
   return (
-    <div className={`min-w-[120px] flex-1 ${isToday ? 'bg-red-50' : ''}`}>
-      <div className={`text-center py-2 font-medium text-sm border-b ${needsApproval ? 'bg-yellow-100' : isFlexDay ? 'bg-green-100' : 'bg-gray-100'}`}>
+    <div className={`min-w-[100px] flex-1 ${isToday ? 'bg-red-50' : ''}`}>
+      <div className={`text-center py-2 font-medium text-xs border-b ${needsApproval ? 'bg-yellow-100' : isFlexDay ? 'bg-green-100' : 'bg-gray-100'}`}>
         <div>{day.name}</div>
         <div className="text-xs text-gray-500">{day.dayOfMonth}/{day.month}</div>
       </div>
@@ -119,7 +153,7 @@ const DayColumn = ({ day, leaves, employees, onAddLeave, onRemoveLeave, isToday 
                     setShowDropdown(false);
                   }
                 }}
-                onBlur={() => setShowDropdown(false)}
+                onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
                 autoFocus
               >
                 <option value="">Seçin...</option>
@@ -151,7 +185,7 @@ const WeeklySchedule = ({ week, leaves, employees, onAddLeave, onRemoveLeave }) 
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden mb-4">
-      <div className="bg-blue-600 text-white text-center py-3 font-bold">
+      <div className="bg-blue-600 text-white text-center py-2 font-bold text-sm">
         {week.label}
       </div>
       <div className="flex overflow-x-auto">
@@ -171,32 +205,42 @@ const WeeklySchedule = ({ week, leaves, employees, onAddLeave, onRemoveLeave }) 
   );
 };
 
-const RulesPanel = () => {
+const RulesPanel = ({ collapsed, onToggle }) => {
   return (
-    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
-      <h3 className="font-bold text-lg mb-3 text-yellow-800">KULLANIM KURALLARI</h3>
-      <ul className="space-y-2 text-sm text-yellow-900">
-        <li className="flex items-start">
-          <span className="text-yellow-600 mr-2">•</span>
-          <span>Pazartesi, Cuma, Cumartesi ve Pazar günleri izin kullanmak isteyen temsilcilerimizin, öncelikle takım liderlerinden onay almaları gerekmektedir.</span>
-        </li>
-        <li className="flex items-start">
-          <span className="text-red-600 mr-2">•</span>
-          <span className="text-red-700 font-medium">Bugün için izin kullanımı yasaktır. Yalnızca önemli ve zorunlu durumlarda istisna uygulanabilir.</span>
-        </li>
-        <li className="flex items-start">
-          <span className="text-green-600 mr-2">•</span>
-          <span>Salı, Çarşamba ve Perşembe günleri izinler; 4-4-3, 3-4-4 veya 4-3-3 şeklinde planlanabilir.</span>
-        </li>
-        <li className="flex items-start">
-          <span className="text-purple-600 mr-2">•</span>
-          <span>Rabia Batuk ve Ayça Demir aynı gün izinli olamaz.</span>
-        </li>
-        <li className="flex items-start">
-          <span className="text-blue-600 mr-2">•</span>
-          <span>Ayça Çisem Çoban'ın izinli olduğu günlerde, ek olarak iki kişi daha izin kullanabilir; bu günlerde toplam üç kişilik izin hakkı bulunmaktadır.</span>
-        </li>
-      </ul>
+    <div className="bg-yellow-50 border border-yellow-200 rounded-lg mb-4">
+      <button 
+        onClick={onToggle}
+        className="w-full p-3 flex justify-between items-center text-left"
+      >
+        <h3 className="font-bold text-lg text-yellow-800">KULLANIM KURALLARI</h3>
+        <span className="text-yellow-600">{collapsed ? '▼' : '▲'}</span>
+      </button>
+      {!collapsed && (
+        <div className="px-4 pb-4">
+          <ul className="space-y-2 text-sm text-yellow-900">
+            <li className="flex items-start">
+              <span className="text-yellow-600 mr-2">•</span>
+              <span>Pazartesi, Cuma, Cumartesi ve Pazar günleri izin kullanmak isteyen temsilcilerimizin, öncelikle takım liderlerinden onay almaları gerekmektedir.</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-red-600 mr-2">•</span>
+              <span className="text-red-700 font-medium">Bugün için izin kullanımı yasaktır. Yalnızca önemli ve zorunlu durumlarda istisna uygulanabilir.</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-green-600 mr-2">•</span>
+              <span>Salı, Çarşamba ve Perşembe günleri izinler; 4-4-3, 3-4-4 veya 4-3-3 şeklinde planlanabilir.</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-purple-600 mr-2">•</span>
+              <span>Rabia Batuk ve Ayça Demir aynı gün izinli olamaz.</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-blue-600 mr-2">•</span>
+              <span>Ayça Çisem Çoban'ın izinli olduğu günlerde, ek olarak iki kişi daha izin kullanabilir; bu günlerde toplam üç kişilik izin hakkı bulunmaktadır.</span>
+            </li>
+          </ul>
+        </div>
+      )}
     </div>
   );
 };
@@ -488,12 +532,21 @@ function App() {
   const [leaves, setLeaves] = useState([]);
   const [overtime, setOvertime] = useState([]);
   const [leaveTypes, setLeaveTypes] = useState([]);
-  const [selectedWeek, setSelectedWeek] = useState(0);
+  const [selectedYear, setSelectedYear] = useState(2025);
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [activeTab, setActiveTab] = useState("schedule");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [rulesCollapsed, setRulesCollapsed] = useState(true);
 
-  const weeks = getWeeksOfJanuary2025();
+  const allWeeks = getWeeksOfYear(selectedYear);
+  
+  // Seçili aya ait haftaları filtrele
+  const weeksOfMonth = allWeeks.filter(week => {
+    const weekStart = new Date(week.start);
+    const weekEnd = new Date(week.end);
+    return weekStart.getMonth() === selectedMonth || weekEnd.getMonth() === selectedMonth;
+  });
 
   const fetchData = useCallback(async () => {
     try {
@@ -523,11 +576,17 @@ function App() {
 
   const handleAddLeave = async (date, employeeId, slot) => {
     try {
-      const week = weeks[selectedWeek];
+      const week = allWeeks.find(w => {
+        const start = new Date(w.start);
+        const end = new Date(w.end);
+        const d = new Date(date);
+        return d >= start && d <= end;
+      });
+      
       await axios.post(`${API}/leaves`, {
         employee_id: employeeId,
         date,
-        week_start: week.start,
+        week_start: week?.start || date,
         slot,
       });
       fetchData();
@@ -600,17 +659,27 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
-      <header className="bg-blue-700 text-white py-4 shadow-lg">
+      <header className="bg-blue-700 text-white py-3 shadow-lg sticky top-0 z-50">
         <div className="container mx-auto px-4">
-          <h1 className="text-2xl font-bold text-center">İzin Yönetim Sistemi</h1>
-          <p className="text-center text-blue-200 text-sm mt-1">Ocak 2025</p>
+          <h1 className="text-xl font-bold text-center">İzin Yönetim Sistemi</h1>
+          <div className="flex justify-center items-center gap-2 mt-2">
+            <select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+              className="bg-blue-600 text-white border border-blue-500 rounded px-2 py-1 text-sm"
+            >
+              <option value={2024}>2024</option>
+              <option value={2025}>2025</option>
+              <option value={2026}>2026</option>
+            </select>
+          </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-6">
+      <main className="container mx-auto px-2 py-4">
         {/* Tabs */}
-        <div className="flex space-x-2 mb-4">
+        <div className="flex space-x-2 mb-4 overflow-x-auto">
           <TabButton
             active={activeTab === "schedule"}
             onClick={() => setActiveTab("schedule")}
@@ -637,35 +706,41 @@ function App() {
         {activeTab === "schedule" && (
           <>
             {/* Rules Panel */}
-            <RulesPanel />
+            <RulesPanel 
+              collapsed={rulesCollapsed} 
+              onToggle={() => setRulesCollapsed(!rulesCollapsed)} 
+            />
 
-            {/* Week Selector */}
-            <div className="bg-white rounded-lg shadow-md p-4 mb-4">
-              <div className="flex flex-wrap gap-2">
-                {weeks.map((week, index) => (
+            {/* Month Selector */}
+            <div className="bg-white rounded-lg shadow-md p-3 mb-4">
+              <div className="flex flex-wrap gap-2 justify-center">
+                {MONTHS.map((month, index) => (
                   <button
-                    key={week.start}
-                    onClick={() => setSelectedWeek(index)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      selectedWeek === index
+                    key={index}
+                    onClick={() => setSelectedMonth(index)}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      selectedMonth === index
                         ? 'bg-blue-600 text-white'
                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                     }`}
                   >
-                    {week.label}
+                    {month}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Weekly Schedule */}
-            <WeeklySchedule
-              week={weeks[selectedWeek]}
-              leaves={leaves}
-              employees={employees}
-              onAddLeave={handleAddLeave}
-              onRemoveLeave={handleRemoveLeave}
-            />
+            {/* Weekly Schedules */}
+            {weeksOfMonth.map((week) => (
+              <WeeklySchedule
+                key={week.start}
+                week={week}
+                leaves={leaves}
+                employees={employees}
+                onAddLeave={handleAddLeave}
+                onRemoveLeave={handleRemoveLeave}
+              />
+            ))}
 
             {/* Employee Legend */}
             <div className="bg-white rounded-lg shadow-md p-4">
@@ -674,7 +749,7 @@ function App() {
                 {employees.map((emp) => (
                   <div
                     key={emp.id}
-                    className="px-3 py-1 rounded text-white text-sm"
+                    className="px-3 py-1 rounded text-white text-xs"
                     style={{ backgroundColor: emp.color }}
                   >
                     {emp.short_name} {emp.role === "TL" ? "(TL)" : ""}
@@ -711,7 +786,7 @@ function App() {
       {/* Footer */}
       <footer className="bg-gray-800 text-white py-4 mt-8">
         <div className="container mx-auto px-4 text-center text-sm">
-          © 2025 İzin Yönetim Sistemi
+          © {selectedYear} İzin Yönetim Sistemi
         </div>
       </footer>
     </div>
