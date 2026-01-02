@@ -1101,6 +1101,51 @@ function App() {
             />
           </>
         )}
+
+        {activeTab === "mealList" && (
+          <>
+            {/* Şirket Çalışanı Bilgisi */}
+            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
+              <h3 className="font-bold text-lg text-orange-800 mb-2">Şirket Çalışanları Yemek Listesi</h3>
+              <p className="text-sm text-orange-700">
+                Bu liste sadece "Şirket Çalışanı" rolündeki personeli gösterir. 
+                İzinli olmayan personel sayısına göre günlük yemek adedi hesaplanır.
+              </p>
+              <p className="text-sm text-orange-600 mt-2">
+                <strong>Toplam Şirket Çalışanı:</strong> {employees.filter(e => e.role === "Company").length} kişi
+              </p>
+            </div>
+
+            {/* Month Selector */}
+            <div className="bg-white rounded-lg shadow-md p-3 mb-4">
+              <div className="flex flex-wrap gap-2 justify-center">
+                {MONTHS.map((month, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedMonth(index)}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      selectedMonth === index
+                        ? 'bg-orange-500 text-white'
+                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                  >
+                    {month}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Weekly Meal Lists */}
+            {weeksOfMonth.map((week) => (
+              <MealList
+                key={week.start}
+                week={week}
+                leaves={leaves}
+                employees={employees}
+              />
+            ))}
+          </>
+        )}
       </main>
 
       {/* Footer */}
