@@ -10,32 +10,35 @@ const getWeeksOfYear2026 = () => {
   const weeks = [];
   // 2026 yılı için haftalar - Pazartesi'den Pazar'a
   // İlk hafta: 29 Aralık 2025 (Pazartesi) - 4 Ocak 2026 (Pazar)
-  let currentDate = new Date(2025, 11, 29); // 29 Aralık 2025 Pazartesi
+  let currentDate = new Date(Date.UTC(2025, 11, 29)); // 29 Aralık 2025 Pazartesi
   
   const formatDateLabel = (date) => {
-    const day = date.getDate();
+    const day = date.getUTCDate();
     const months = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", 
                     "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
-    return `${day} ${months[date.getMonth()]}`;
+    return `${day} ${months[date.getUTCMonth()]}`;
   };
   
-  // 2026 yılı sonuna kadar (yaklaşık 53 hafta)
-  while (currentDate.getFullYear() <= 2026) {
+  // 2026 yılı sonuna kadar
+  while (currentDate.getUTCFullYear() <= 2026) {
     const weekStart = new Date(currentDate);
     const weekEnd = new Date(currentDate);
-    weekEnd.setDate(weekEnd.getDate() + 6);
+    weekEnd.setUTCDate(weekEnd.getUTCDate() + 6);
     
     // 2027'ye geçtiyse dur
-    if (weekStart.getFullYear() > 2026 && weekStart.getMonth() > 0) break;
+    if (weekStart.getUTCFullYear() > 2026 && weekStart.getUTCMonth() > 0) break;
+    
+    const startStr = `${weekStart.getUTCFullYear()}-${String(weekStart.getUTCMonth() + 1).padStart(2, '0')}-${String(weekStart.getUTCDate()).padStart(2, '0')}`;
+    const endStr = `${weekEnd.getUTCFullYear()}-${String(weekEnd.getUTCMonth() + 1).padStart(2, '0')}-${String(weekEnd.getUTCDate()).padStart(2, '0')}`;
     
     weeks.push({
-      start: weekStart.toISOString().split('T')[0],
-      end: weekEnd.toISOString().split('T')[0],
+      start: startStr,
+      end: endStr,
       label: `${formatDateLabel(weekStart)} - ${formatDateLabel(weekEnd)}`,
-      month: weekEnd.getMonth() // Haftanın çoğunluğunun ait olduğu ay
+      month: weekEnd.getUTCMonth()
     });
     
-    currentDate.setDate(currentDate.getDate() + 7);
+    currentDate.setUTCDate(currentDate.getUTCDate() + 7);
   }
   
   return weeks;
