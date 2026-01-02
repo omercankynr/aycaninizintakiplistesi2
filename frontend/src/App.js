@@ -693,16 +693,16 @@ const MealList = ({ week, leaves, employees }) => {
   const days = getDaysOfWeek(week.start);
   
   // Sadece şirket çalışanlarını filtrele (Home Office olmayanlar)
-  const companyEmployees = employees.filter(emp => emp.role === "Company" && !emp.home_office);
-  const homeOfficeEmployees = employees.filter(emp => emp.role === "Company" && emp.home_office);
-  const totalCompanyEmployees = companyEmployees.length;
+  const officeEmployees = employees.filter(emp => emp.work_type === "Office");
+  const homeOfficeEmployees = employees.filter(emp => emp.work_type === "HomeOffice");
+  const totalOfficeEmployees = officeEmployees.length;
   
   // Her gün için çalışan (izinli olmayan) kişileri hesapla
   const getDayData = (day) => {
     const dayLeaves = leaves.filter(l => l.date === day.date);
     const onLeaveIds = dayLeaves.map(l => l.employee_id);
-    const workingEmployees = companyEmployees.filter(emp => !onLeaveIds.includes(emp.id));
-    const onLeaveEmployees = companyEmployees.filter(emp => onLeaveIds.includes(emp.id));
+    const workingEmployees = officeEmployees.filter(emp => !onLeaveIds.includes(emp.id));
+    const onLeaveEmployees = officeEmployees.filter(emp => onLeaveIds.includes(emp.id));
     
     return {
       working: workingEmployees,
