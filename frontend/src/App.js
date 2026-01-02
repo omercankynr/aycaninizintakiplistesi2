@@ -1015,6 +1015,13 @@ function App() {
           >
             İzin Türleri
           </TabButton>
+          <TabButton
+            active={activeTab === "mealList"}
+            onClick={() => setActiveTab("mealList")}
+            color="bg-orange-500"
+          >
+            Yemek Listesi
+          </TabButton>
         </div>
 
         {activeTab === "schedule" && (
