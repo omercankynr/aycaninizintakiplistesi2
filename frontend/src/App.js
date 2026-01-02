@@ -407,7 +407,8 @@ const EmployeeManagement = ({ employees, onAdd, onUpdate, onDelete, onClose }) =
                   <div>
                     <div className="font-medium">{emp.name}</div>
                     <div className="text-sm text-gray-500">
-                      {emp.role === "TL" ? "Takım Lideri" : emp.role === "Company" ? "Şirket Çalışanı" : "Temsilci"}
+                      {emp.role === "Company" ? "Şirket Çalışanı" : "Temsilci"}
+                      {emp.is_team_leader && <span className="ml-2 bg-green-100 text-green-700 px-2 py-0.5 rounded text-xs font-medium">TL</span>}
                       {emp.home_office && <span className="ml-2 bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs">Home Office</span>}
                       {" "} • {emp.short_name}
                     </div>
