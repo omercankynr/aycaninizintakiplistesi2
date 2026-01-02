@@ -1127,7 +1127,7 @@ function App() {
               </p>
               <div className="flex flex-wrap gap-4 mt-2 text-sm">
                 <p className="text-orange-600">
-                  <strong>Şirket Çalışanı:</strong> {employees.filter(e => e.work_type === "Office").length} kişi
+                  <strong>Şirket Çalışanı:</strong> {employees.filter(e => !e.work_type || e.work_type === "Office").length} kişi
                 </p>
                 <p className="text-blue-600">
                   <strong>Home Office:</strong> {employees.filter(e => e.work_type === "HomeOffice").length} kişi
