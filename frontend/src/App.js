@@ -380,7 +380,7 @@ const EmployeeManagement = ({ employees, onAdd, onUpdate, onDelete, onClose }) =
                   <div>
                     <div className="font-medium">{emp.name}</div>
                     <div className="text-sm text-gray-500">
-                      {emp.role === "TL" ? "Takım Lideri" : "Temsilci"} • {emp.short_name}
+                      {emp.role === "TL" ? "Takım Lideri" : emp.role === "Company" ? "Şirket Çalışanı" : "Temsilci"} • {emp.short_name}
                     </div>
                   </div>
                 </div>
