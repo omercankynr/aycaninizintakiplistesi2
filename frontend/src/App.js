@@ -8,11 +8,11 @@ const API = `${BACKEND_URL}/api`;
 // Helper functions
 const getWeeksOfJanuary2025 = () => {
   return [
-    { start: "2024-12-30", end: "2025-01-05", label: "30 Aralık - 5 Ocak" },
-    { start: "2025-01-06", end: "2025-01-12", label: "6 Ocak - 12 Ocak" },
-    { start: "2025-01-13", end: "2025-01-19", label: "13 Ocak - 19 Ocak" },
-    { start: "2025-01-20", end: "2025-01-26", label: "20 Ocak - 26 Ocak" },
-    { start: "2025-01-27", end: "2025-02-02", label: "27 Ocak - 2 Şubat" },
+    { start: "2024-12-29", end: "2025-01-04", label: "29 Aralık - 4 Ocak" },
+    { start: "2025-01-05", end: "2025-01-11", label: "5 Ocak - 11 Ocak" },
+    { start: "2025-01-12", end: "2025-01-18", label: "12 Ocak - 18 Ocak" },
+    { start: "2025-01-19", end: "2025-01-25", label: "19 Ocak - 25 Ocak" },
+    { start: "2025-01-26", end: "2025-02-01", label: "26 Ocak - 1 Şubat" },
   ];
 };
 
