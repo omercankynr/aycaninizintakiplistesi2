@@ -226,7 +226,7 @@ const RulesPanel = ({ collapsed, onToggle }) => {
             </li>
             <li className="flex items-start">
               <span className="text-red-600 mr-2">•</span>
-              <span className="text-red-700 font-medium">Bugün için izin kullanımı yasaktır. Yalnızca önemli ve zorunlu durumlarda istisna uygulanabilir.</span>
+              <span className="text-red-700 font-medium">Bu günler için izin kullanımı yasaktır. Yalnızca önemli ve zorunlu durumlarda istisna uygulanabilir.</span>
             </li>
             <li className="flex items-start">
               <span className="text-green-600 mr-2">•</span>
