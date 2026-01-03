@@ -1136,13 +1136,7 @@ function App() {
 
         {activeTab === "overtime" && (
           <>
-            {isTeamLeader ? (
-              <OvertimeForm employees={employees} onSubmit={handleAddOvertime} />
-            ) : (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4 text-yellow-800">
-                Fazla çalışma eklemek için Takım Lideri yetkisi gereklidir.
-              </div>
-            )}
+            <OvertimeForm employees={employees} onSubmit={handleAddOvertime} />
             <OvertimeTable
               overtime={overtime}
               employees={employees}
@@ -1153,13 +1147,7 @@ function App() {
 
         {activeTab === "leaveTypes" && (
           <>
-            {isTeamLeader ? (
-              <LeaveTypeForm employees={employees} onSubmit={handleAddLeaveType} />
-            ) : (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4 text-yellow-800">
-                İzin türü eklemek için Takım Lideri yetkisi gereklidir.
-              </div>
-            )}
+            <LeaveTypeForm employees={employees} onSubmit={handleAddLeaveType} />
             <LeaveTypeTable
               leaveTypes={leaveTypes}
               employees={employees}
