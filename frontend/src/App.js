@@ -832,6 +832,7 @@ function App() {
   const [error, setError] = useState(null);
   const [rulesCollapsed, setRulesCollapsed] = useState(true);
   const [showEmployeeManagement, setShowEmployeeManagement] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState(localStorage.getItem('currentUserId') || "");
 
   const allWeeks = getWeeksOfYear2026();
   
@@ -840,6 +841,15 @@ function App() {
     const weekEnd = new Date(week.end);
     return weekStart.getMonth() === selectedMonth || weekEnd.getMonth() === selectedMonth;
   });
+
+  // Mevcut kullanıcı TL mi?
+  const currentUser = employees.find(e => e.id === currentUserId);
+  const isTeamLeader = currentUser?.position === "TL";
+
+  const handleUserChange = (userId) => {
+    setCurrentUserId(userId);
+    localStorage.setItem('currentUserId', userId);
+  };
 
   const fetchData = useCallback(async () => {
     try {
